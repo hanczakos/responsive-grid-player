@@ -32,7 +32,7 @@ app.directive('moviePlayer', function() {
 
 });
 
-app.directive('movieList', function() {
+app.directive('movieList', function($window) {
     return {
         restrict: 'E',
         templateUrl: 'movie-list.directive.html',
@@ -40,15 +40,53 @@ app.directive('movieList', function() {
             movies: '='
         },
         link: function($scope) {
+            var columns;
+            var selectedElement;
+
+            function setColumns() {
+                var windowWidth = $window.innerWidth;
+                if (windowWidth < 768) {
+                    columns = 2;
+                } else if (windowWidth < 992) {
+                    columns = 3;
+                } else {
+                    columns = 4;
+                }
+            }
+
+            angular.element($window).bind('resize', function() {
+                setColumns();
+                $scope.$apply(function () {
+                    positionPlayer(selectedElement);
+                });
+            });
+
+            setColumns();
+
+            function positionPlayer(element) {
+                var row = element.parentNode,
+                    childNodes = [].slice.call(row.children),
+                    currentIndex = childNodes.indexOf(element),
+                    insertBeforeIndex = currentIndex + columns - currentIndex % columns;
+
+                row.insertBefore($scope.playerElement,
+                    childNodes.filter(function(node) {
+                        return node.getAttribute('index') == insertBeforeIndex
+                    })[0]
+                );
+            }
+
             $scope.playMovie = function (event, movie) {
+
                 if ($scope.selectedMovie === movie) {
                     $scope.selectedMovie = undefined;
+
                 } else {
-                    event.currentTarget.parentNode.insertBefore($scope.playerElement, event.currentTarget.nextSibling);
+                    selectedElement = event.currentTarget;
+                    positionPlayer(selectedElement);
+
                     $scope.selectedMovie = movie;
-
                 }
-
             };
         }
     }
