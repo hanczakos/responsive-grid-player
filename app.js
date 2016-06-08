@@ -39,15 +39,17 @@ app.directive('movieList', function() {
         scope: {
             movies: '='
         },
-        link: function($scope, element) {
+        link: function($scope) {
             $scope.playMovie = function (event, movie) {
-                $scope.selectedMovie = movie;
-                event.currentTarget.parentNode.insertBefore($scope.playerElement, event.currentTarget.nextSibling);
-            };
+                if ($scope.selectedMovie === movie) {
+                    $scope.selectedMovie = undefined;
+                } else {
+                    event.currentTarget.parentNode.insertBefore($scope.playerElement, event.currentTarget.nextSibling);
+                    $scope.selectedMovie = movie;
 
-            $scope.$watch('playerElement', function() {
-                console.log($scope.playerElement);
-            })
+                }
+
+            };
         }
     }
 });
