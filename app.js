@@ -56,9 +56,7 @@ app.directive('movieList', function($window) {
 
             angular.element($window).bind('resize', function() {
                 setColumns();
-                $scope.$apply(function () {
-                    positionPlayer(selectedElement);
-                });
+                positionPlayer(selectedElement);
             });
 
             setColumns();
@@ -66,7 +64,7 @@ app.directive('movieList', function($window) {
             function positionPlayer(element) {
                 var row = element.parentNode,
                     childNodes = [].slice.call(row.children),
-                    currentIndex = childNodes.indexOf(element),
+                    currentIndex = +element.getAttribute('index'),
                     insertBeforeIndex = currentIndex + columns - currentIndex % columns;
 
                 row.insertBefore($scope.playerElement,
