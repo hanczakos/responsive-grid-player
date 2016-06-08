@@ -19,7 +19,7 @@ app.controller('MainController', function($scope) {
 app.directive('moviePlayer', function() {
     return {
         restrict: 'E',
-        template: '<div class="col-sm-12 col-xs-12"> <p>Player for movie: <strong>{{movie.name}}</strong></p> </div>',
+        template: '<div class="col-xs-12"> <p>Player for movie: <strong>{{movie.name}}</strong></p> </div>',
         scope: {
             movie: '=',
             element: '='
@@ -56,7 +56,9 @@ app.directive('movieList', function($window) {
 
             angular.element($window).bind('resize', function() {
                 setColumns();
-                positionPlayer(selectedElement);
+                if (selectedElement) {
+                    positionPlayer(selectedElement);
+                }
             });
 
             setColumns();
